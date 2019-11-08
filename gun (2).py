@@ -59,8 +59,8 @@ class gun():
 
 
 
-t1 = target_module.target()
-t1.new_target()
+t1 = target_module.target(canv)
+t1.new_target(canv)
 targets = [(t1, 1)]
 screen1 = canv.create_text(400, 300, text='', font='28')
 points = canv.create_text(30, 30, text='0', font='28')
@@ -99,7 +99,7 @@ def new_game(event=''):
             balls.pop(b_num)
         if time.time() - respawn >= 3:
             target_num += 1
-            targets.append((target(), target_num))
+            targets.append((target(canv), target_num))
             targets[-1][0].new_target()
             respawn = time.time()
         canv.update()

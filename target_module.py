@@ -1,4 +1,4 @@
-from random import randrange as triangular, rnd
+from random import randrange as rnd
 
 
 class target():
@@ -6,8 +6,8 @@ class target():
         self.points = 0
         self.live = 1
         self.id = canv.create_oval(0, 0, 0, 0)
-        self.new_target()
-        self.v = triangular(0, 5)
+        self.new_target(canv)
+        self.v = rnd(0, 5)
 
     def new_target(self, canv):
         x = self.x = rnd(600, 780)

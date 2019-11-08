@@ -6,7 +6,7 @@ class ball():
         self.r = 10
         self.vx = 0
         self.vy = 0
-        self.color = choice(['blue', 'green', 'red', 'brown'])
+        self.color = 'blue'
         self.id = canv.create_oval(
                 self.x - self.r,
                 self.y - self.r,
