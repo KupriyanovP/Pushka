@@ -2,7 +2,8 @@ from random import randrange as rnd, choice, triangular
 import tkinter as tk
 import math
 import time
-
+import ball_module
+import target_module
 # print (dir(math))
 
 root = tk.Tk()
@@ -11,53 +12,6 @@ root.geometry('800x600')
 canv = tk.Canvas(root, bg='white')
 canv.pack(fill=tk.BOTH, expand=1)
 
-
-class ball():
-    def __init__(self, x=40, y=450):
-        self.x = x
-        self.y = y
-        self.r = 10
-        self.vx = 0
-        self.vy = 0
-        self.color = choice(['blue', 'green', 'red', 'brown'])
-        self.id = canv.create_oval(
-                self.x - self.r,
-                self.y - self.r,
-                self.x + self.r,
-                self.y + self.r,
-                fill=self.color
-        )
-        self.live = 100
-
-    def set_coords(self):
-        canv.coords(
-                self.id,
-                self.x - self.r,
-                self.y - self.r,
-                self.x + self.r,
-                self.y + self.r
-        )
-
-    def move(self):
-        self.vy -= 2.5
-        self.x += self.vx
-        self.y -= self.vy
-        if self.x + self.r >= 800:
-            self.vx = - 0.7 * self.vx
-            self.x = 800 - self.r
-        if self.y + self.r >= 600:
-            self.vy = - 0.7 * self.vy
-            self.vx *= 0.7
-            self.y = 600 - self.r
-        self.set_coords()
-        self.live -= 1
-        if self.live == 0:
-            canv.coords(self.id, 0, 0, 0, 0)
-
-    def hittest(self, obj):
-        if (self.x - obj.x) ** 2 + (self.y - obj.y) ** 2 <= (self.r + obj.r) ** 2:
-            return True
-        return False
 
 
 class gun():
@@ -73,7 +27,7 @@ class gun():
     def fire2_end(self, event):
         global balls, bullet
         bullet += 1
-        new_ball = ball()
+        new_ball = ball_module.ball(canv)
         new_ball.r += 5
         self.an = math.atan((event.y-new_ball.y) / (event.x-new_ball.x))
         new_ball.vx = self.f2_power * math.cos(self.an)
@@ -103,41 +57,9 @@ class gun():
             canv.itemconfig(self.id, fill='black')
 
 
-class target():
-    def __init__(self):
-        self.points = 0
-        self.live = 1
-        self.id = canv.create_oval(0, 0, 0, 0)
-        self.new_target()
-        self.v = triangular(0, 5)
-
-    def new_target(self):
-        x = self.x = rnd(600, 780)
-        y = self.y = rnd(300, 550)
-        r = self.r = rnd(2, 50)
-        color = self.color = 'red'
-        canv.coords(self.id, x-r, y-r, x+r, y+r)
-        canv.itemconfig(self.id, fill=color)
-
-    def hit(self, points=1):
-        canv.coords(self.id, -10, -10, -10, -10)
-        self.points += points
-
-    def move(self):
-        if self.live:
-            self.y += self.v
-            canv.coords(self.id,
-                        self.x - self.r,
-                        self.y - self.r,
-                        self.x + self.r,
-                        self.y + self.r)
-            if self.y + self.r >= 600 or self.y - self.r <= 0:
-                self.v = -self.v
-        else:
-            canv.coords(self.id, 0, 0, 0, 0)
 
 
-t1 = target()
+t1 = target_module.target()
 t1.new_target()
 targets = [(t1, 1)]
 screen1 = canv.create_text(400, 300, text='', font='28')
@@ -160,10 +82,10 @@ def new_game(event=''):
     while targets or balls:
         del_balls = []
         for t, n in targets:
-            t.move()
+            t.move(canv)
         for b_num in range(len(balls)):
             b = balls[b_num]
-            b.move()
+            b.move(canv)
             for t, n in targets:
                 if b.hittest(t) and t.live:
                     t.live = 0
