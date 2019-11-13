@@ -89,7 +89,7 @@ def new_game(event=''):
             for t, n in targets:
                 if b.hittest(t) and t.live:
                     t.live = 0
-                    t.hit()
+                    t.hit(canv)
                     count += 1
                     canv.itemconfig(screen1, text='Вы уничтожили цель ' + str(n) + ' за ' + str(bullet) + ' выстрелов')
                     canv.itemconfig(points, text=str(count))
@@ -99,8 +99,8 @@ def new_game(event=''):
             balls.pop(b_num)
         if time.time() - respawn >= 3:
             target_num += 1
-            targets.append((target(canv), target_num))
-            targets[-1][0].new_target()
+            targets.append((target_module.target(canv), target_num))
+            targets[-1][0].new_target(canv)
             respawn = time.time()
         canv.update()
         time.sleep(0.03)
